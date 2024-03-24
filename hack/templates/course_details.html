@@ -1,0 +1,17 @@
+<!-- templates/course_details.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="course-detail">
+    <h1>{{ course.title }}</h1>
+    <p>{{ course.description }}</p>
+    <p><strong>Price:</strong> ${{ course.price_per_hour }} per hour</p>
+    <p><strong>Tags:</strong> {{ course.category_tags }}</p>
+
+    <!-- Booking form -->
+    <form action="{{ url_for('book_course', course_id=course.id) }}" method="post">
+        <!-- You can add additional fields like date and time selection here -->
+        <button type="submit" class="btn btn-primary">Book This Course</button>
+    </form>
+</div>
+{% endblock %}

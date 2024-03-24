@@ -52,7 +52,42 @@ main {
     display: flex;
     flex-wrap: wrap;
 }
+.card-link {
+    text-decoration: none;
+    color: inherit;
+}
 
+.card-link:hover {
+    cursor: pointer;
+}
+
+.booking-card {
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.booking-card img {
+    width: 100%;
+    height: auto;
+}
+
+.booking-card-body {
+    padding: 1rem;
+}
+
+.booking-card-footer {
+    background-color: #f8f8f8;
+    border-top: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+}
+
+
+.btn-danger{
+    padding-top: 10px;
+}
 
 footer {
     background-color: #333;

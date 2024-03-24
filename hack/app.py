@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session,flash
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
 from flask_session import Session
@@ -51,6 +51,17 @@ class Course(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Linking a course to a user
     creator = relationship('User', backref='courses')  # Establishing a bidirectional relationship with the User model
 
+
+class Booking(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
+    course = db.relationship('Course', backref='bookings')  # This line establishes the relationship
+    booked_on = db.Column(db.DateTime, nullable=False, default=datetime.now())
+
+    def __repr__(self):
+        return f'<Booking {self.id}>'
+
     def __repr__(self):
         return f'<Course {self.title}>'
 
@@ -81,7 +92,9 @@ def login():
             # Redirect to dashboard after successful login
             return redirect(url_for('dashboard'))
         else:
-            return 'Invalid username or password'
+            flash("You must be logged in to delete a course.")
+
+            # return 'Invalid username or password'
     return render_template('login.html')
 
 @app.route('/logout')
@@ -139,6 +152,74 @@ def create_course():
 
         return redirect(url_for('dashboard'))
     return render_template('create_course.html')
+from sqlalchemy.orm import joinedload
+
+@app.route('/my_profile')
+def my_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    user_id = session['user_id']
+    user_courses = Course.query.filter_by(user_id=user_id).all()
+    user_bookings = Booking.query.options(joinedload(Booking.course)).filter_by(user_id=user_id).all()
+    return render_template('my_profile.html', courses=user_courses, bookings=user_bookings)
+
+
+@app.route('/delete_course/<int:course_id>', methods=['POST'])
+def delete_course(course_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    course_to_delete = Course.query.get_or_404(course_id)
+    
+    # Check if the current user is the creator of the course
+    if course_to_delete.user_id != session['user_id']:
+        # If not, do not allow them to delete it
+        return redirect(url_for('my_profile'))
+    
+    db.session.delete(course_to_delete)
+    db.session.commit()
+    
+    # Redirect to the profile page with a message about the deletion
+    return redirect(url_for('my_profile'))
+
+@app.route('/course/<int:course_id>')
+def course_details(course_id):
+    # Query the database for the course with the given course_id
+    course = Course.query.get_or_404(course_id)
+    return render_template('course_details.html', course=course)
+
+@app.route('/book_course/<int:course_id>', methods=['POST'])
+def book_course(course_id):
+    if 'user_id' not in session:
+        flash('Please log in to book courses.', 'warning')
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    # Assuming you have a Course and Booking model set up already
+    booking = Booking(user_id=user_id, course_id=course_id)
+    db.session.add(booking)
+    db.session.commit()
+    flash('Your booking was successful!', 'success')
+
+    return redirect(url_for('my_profile'))
+
+@app.route('/cancel_booking/<int:booking_id>', methods=['POST'])
+def cancel_booking(booking_id):
+    if 'user_id' not in session:
+        flash('Please log in to cancel bookings.', 'warning')
+        return redirect(url_for('login'))
+
+    booking = Booking.query.get_or_404(booking_id)
+    if booking.user_id != session['user_id']:
+        flash('You can only cancel your own bookings.', 'danger')
+        return redirect(url_for('my_profile'))
+
+    db.session.delete(booking)
+    db.session.commit()
+    flash('Booking cancelled successfully.', 'success')
+    return redirect(url_for('my_profile'))
+
 
 if __name__ == '__main__':
     with app.app_context():

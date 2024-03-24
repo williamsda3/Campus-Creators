@@ -11,12 +11,16 @@
    <div class="container mt-4">
     <div class="row">
         {% for course in courses %}
+        <a href="{{ url_for('course_details', course_id=course.id) }}" class="card-link">
+
         <div class="col-md-4 mb-4">
             <div class="card">
                 <img src="{{ url_for('static', filename=course.image_url) }}" alt="{{ course.title }}">
 
                 <div class="card-body">
+
                     <h5 class="card-title">{{ course.title }}</h5>
+                    
                     <p class="card-text">{{ course.creator.username }}</p>
                     <p class="card-text">{{ course.description }}</p>
                     <div class="d-flex justify-content-between align-items-center">
@@ -30,6 +34,7 @@
                     <small class="text-muted">Tags: {{ course.category_tags }}</small>
                 </div>
             </div>
+        </a>
         </div>
         {% endfor %}
     </div>
