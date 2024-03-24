@@ -5,6 +5,7 @@ from flask_session import Session
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
+from flask_migrate import Migrate
 from dotenv import load_dotenv
 
 load_dotenv()  # This load the .env file 
@@ -34,6 +35,8 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
 Session(app)
 
 class User(db.Model):
