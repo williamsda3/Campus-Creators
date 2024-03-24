@@ -5,27 +5,29 @@ from flask_session import Session
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
+from dotenv import load_dotenv
+
+load_dotenv()  # This load the .env file 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+
+
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-
+app.config["SESSION_TYPE"] = os.getenv('SESSION_TYPE')
 
 UPLOAD_FOLDER = 'images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-
-# Ensure the upload folder exists
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
-UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'images')
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = os.path.join(BASE_DIR, 'static', 'images')
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -50,6 +52,7 @@ class Course(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Linking a course to a user
     creator = relationship('User', backref='courses')  # Establishing a bidirectional relationship with the User model
+    
 
 
 class Booking(db.Model):
@@ -178,6 +181,11 @@ def delete_course(course_id):
         # If not, do not allow them to delete it
         return redirect(url_for('my_profile'))
     
+    course = Course.query.get_or_404(course_id)
+    # Delete all associated bookings first
+    Booking.query.filter_by(course_id=course.id).delete()
+    db.session.delete(course)
+    db.session.commit()
     db.session.delete(course_to_delete)
     db.session.commit()
     
