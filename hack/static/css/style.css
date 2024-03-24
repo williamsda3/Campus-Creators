@@ -1,0 +1,60 @@
+/* static/css/style.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    flex: 1;
+    padding: 20px;
+}
+.card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card-body {
+    flex: 1 0 auto; /* This allows the card body to expand to fill the space */
+}
+
+.card-footer {
+    flex-shrink: 0; /* This prevents the footer from shrinking */
+}
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+footer {
+    background-color: #333;
+    color: white;
+}

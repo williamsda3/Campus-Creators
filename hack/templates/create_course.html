@@ -1,0 +1,30 @@
+{% extends "base.html" %} 
+{% block content %}
+<!-- templates/create_course.html -->
+<form method="post" enctype="multipart/form-data">
+    <label for="title">Course Title:</label>
+
+    <input type="text" name="title" required><br>
+    <br>
+
+    <label for="description">Description:</label>
+    <textarea name="description" required></textarea><br>
+    <br>
+
+    <label for="price_per_hour">Price per Hour:</label>
+    <input type="number" step="0.01" name="price_per_hour" required><br>
+    <br>
+
+    <label for="image">Course Image:</label>
+    <input type="file" name="image"><br>
+    <br>
+
+    <label for="category_tags">Category Tags:</label>
+    <input type="text" name="category_tags" required><br>
+    <br>
+
+    <!-- Add more fields as necessary -->
+
+    <input type="submit" value="Create Course">
+</form>
+{% endblock %}

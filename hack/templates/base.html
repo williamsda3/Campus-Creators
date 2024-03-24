@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your App Name{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Add additional CSS files or external stylesheets here -->
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="{{ url_for('index') }}">My Tutor Platform</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+              <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('dashboard') }}">Home</a>
+                </li>
+                <!-- More links for non-logged users -->
+              </ul>
+              {% if 'user_id' in session %}
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('profile') }}">My Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('create_course') }}">Create a Course</a>
+                </li>
+               
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+              </ul>
+              {% endif %}
+            </div>
+          </nav>
+          
+    </header>
+
+    <main>
+        {% block content %}
+        <!-- The content of each page will be inserted here -->
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>Your App © 2024</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <!-- Add additional JS files or external scripts here -->
+</body>
+</html>
