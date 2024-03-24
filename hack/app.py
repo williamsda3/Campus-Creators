@@ -154,6 +154,7 @@ def create_course():
     return render_template('create_course.html')
 from sqlalchemy.orm import joinedload
 
+
 @app.route('/my_profile')
 def my_profile():
     if 'user_id' not in session:
